@@ -39,6 +39,9 @@ get_pin:                      ; uint32_t get_pin()
   cmp r8, 0                   ; Check if it's null-terminator
   je .end_loop                ; End the loop
 
+  cmp r8, 10                  ; Check if it's a newline character
+  je .end_loop                ; End the loop
+
   sub r8, '0'                 ; Convert ASCII code to digit value
   imul rax, rcx               ; Multiply current result by 10
   add rax, r8                 ; Add the digit value
