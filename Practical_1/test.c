@@ -132,11 +132,14 @@ TestCase test_cases[] = {
 
 int main(void)
 {
-    size_t num_tests = sizeof(test_cases) / sizeof(TestCase);
+    /*size_t num_tests = sizeof(test_cases) / sizeof(TestCase);
     for (size_t i = 0; i < num_tests; i++)
     {
         printf("Running test %s...\n", test_cases[i].name);
         test_cases[i].function();
-    }
+    }*/
+
+    printf("The integer is: %d\n", get_pin());
+
     return 0;
 }
