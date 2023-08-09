@@ -30,7 +30,5 @@ _start:
   mov rax, 1234               ; Move the pin value to rax register
   add rax, 10000              ; Add 10000 to rax register
 
-  ; Convert the account number to ASCII
-  
   leave
   ret
