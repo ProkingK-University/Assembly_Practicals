@@ -1,36 +1,14 @@
-ASM_SOURCES := $(wildcard *.asm)
-C_TEST_SOURCES := $(wildcard test.c)
-OBJ_DIR := obj
-BIN_DIR := bin
-EXECUTABLE := $(BIN_DIR)/test
-ASM_OBJECTS := $(addprefix $(OBJ_DIR)/, $(notdir $(ASM_SOURCES:.asm=.o)))
-C_TEST_OBJECTS := $(addprefix $(OBJ_DIR)/, $(notdir $(C_TEST_SOURCES:.c=.o)))
-VPATH := src:src/helpers:test
+main: get_pin.o calculate_account.o
+	ld -o main get_pin.o calculate_account.o
 
-all: $(OBJ_DIR) $(BIN_DIR) $(EXECUTABLE)
+get_pin.o: get_pin.asm
+	yasm -f elf64 -g dwarf2 -l get_pin.lst get_pin.asm
 
-$(EXECUTABLE): $(ASM_OBJECTS) $(C_TEST_OBJECTS)
-	gcc -no-pie -g -m64 -o $@ $^
-
-$(OBJ_DIR)/%.o: %.asm
-	yasm -f elf64 -g dwarf2 $< -o $@
-
-$(OBJ_DIR)/%.o: %.c
-	gcc -g -m64 -c $< -o $@
-
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
-
-$(BIN_DIR):
-	mkdir -p $(BIN_DIR)
-
-run: $(EXECUTABLE)
-	@./$(EXECUTABLE)
-
-debug: $(EXECUTABLE)
-	gdb $(EXECUTABLE)
+calculate_account.o: calculate_account.asm
+	yasm -f elf64 -g dwarf2 -l calculate_account.lst calculate_account.asm
 
 clean:
-	rm -f $(ASM_OBJECTS) $(C_TEST_OBJECTS) $(EXECUTABLE)
+	rm -f *.o *.lst main
 
-fresh: clean all
+run:
+	./main
