@@ -2,15 +2,12 @@
 global get_pin
 
 section .data
-  prompt db "Enter 4-digit PIN: ", 0   
+  prompt db "Enter 4-digit PIN: ", 0
 
 section .bss
   pin resb 5                  ; Reserve space input
 
 section .text
-global _start
-
-_start:
 get_pin:                      ; uint32_t get_pin()
   push rbp                    ; Save base pointer onto stack
   mov rbp, rsp                ; Set base pointer to current value on the stack

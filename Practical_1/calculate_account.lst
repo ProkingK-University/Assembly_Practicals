@@ -1,42 +1,61 @@
      1                                 %line 1+1 calculate_account.asm
      2                                 
      3                                 [global calculate_account]
-     4                                 [section .text]
-     5                                 
-     6                                  _start:
-     7                                 calculate_account:
-     8                                 
-     9                                 
+     4                                 
+     5                                 [section .data]
+     6 00000000 596F7572206163636F-     text db 'Your account number is:',10
+     7 00000000 756E74206E756D6265-
+     8 00000000 722069733A0A       
+     9                                  textLen equ $ - text
     10                                 
-    11                                 
-    12 00000000 55                      push rbp
-    13 00000001 4889E5                  mov rbp, rsp
-    14                                 
-    15                                 
-    16 00000004 4889E6                  mov rsi, rsp
+    11                                 [section .text]
+    12                                 [global _start]
+    13                                 
+    14                                 _start:
+    15                                  calculate_account:
+    16                                 
     17                                 
     18                                 
-    19 00000007 89F8                    mov eax, edi
-    20 00000009 0510270000              add eax, 10000
-    21                                 
-    22                                 
-    23 0000000E 4889F8                  mov rax, rdi
+    19                                 
+    20                                 
+    21 00000000 55                      push rbp
+    22 00000001 4889E5                  mov rbp, rsp
+    23                                 
     24                                 
     25                                 
-    26 00000011 4831C9                  xor rcx, rcx
-    27                                 
-    28                                  .convert_loop:
-    29 00000014 48FFCE                  dec rsi
-    30 00000017 48C7C20A000000          mov rdx, 10
-    31 0000001E 48F7F2                  div rdx
-    32 00000021 80C230                  add dl, '0'
-    33 00000024 8816                    mov [rsi], dl
-    34 00000026 4885C0                  test rax, rax
-    35 00000029 75E7                    jnz .convert_loop
+    26                                 
+    27 00000004 48C7C001000000          mov rax, 1
+    28 0000000B 48C7C701000000          mov rdi, 1
+    29 00000012 48C7C6[00000000]        mov rsi, text
+    30 00000019 48BA18000000000000-     mov rdx, textLen
+    31 00000019 00                 
+    32 00000023 0F05                    syscall
+    33                                 
+    34                                 
+    35 00000025 4889E6                  mov rsi, rsp
     36                                 
     37                                 
-    38                                 
-    39                                 
+    38 00000028 89F8                    mov eax, edi
+    39 0000002A 0510270000              add eax, 10000
     40                                 
-    41 0000002B C9                      leave
-    42 0000002C C3                      ret
+    41                                 
+    42 0000002F 4889F8                  mov rax, rdi
+    43                                 
+    44                                 
+    45 00000032 4831C9                  xor rcx, rcx
+    46                                 
+    47                                  .convert_loop:
+    48 00000035 48FFCE                  dec rsi
+    49 00000038 48C7C20A000000          mov rdx, 10
+    50 0000003F 48F7F2                  div rdx
+    51 00000042 80C230                  add dl, '0'
+    52 00000045 8816                    mov [rsi], dl
+    53 00000047 4885C0                  test rax, rax
+    54 0000004A 75E7                    jnz .convert_loop
+    55                                 
+    56                                 
+    57                                 
+    58                                 
+    59                                 
+    60 0000004C C9                      leave
+    61 0000004D C3                      ret

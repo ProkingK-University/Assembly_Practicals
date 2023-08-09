@@ -9,6 +9,7 @@ section .data
 ; ==========================
 
 section .text
+
 ; void greeting()
 ; This function prints a greeting to the screen
 greeting:

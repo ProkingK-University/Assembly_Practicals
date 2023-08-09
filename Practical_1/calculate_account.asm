@@ -1,21 +1,34 @@
 ; This makes your function available to other files
-  global calculate_account
-  section .text
+global calculate_account
 
-  _start:
-calculate_account:
+section .data
+  text db 'Your account number is:',10
+  textLen equ $ - text
+
+section .text
+  global _start
+
+_start:
+  calculate_account:
   ; Arguments:
   ; rdi - pin (Input Argument)
 
   ; Set up the stack frame
+
   push rbp        ; Save the base pointer
   mov rbp, rsp    ; Set rbp to the current value of rsp
 
-  ; Initialize rsi to point to the start of the buffer
-  mov rsi, rsp    ; Set rsi to point to the start of buffer
+  ; Print the "Your account number is: " message
+
+  mov rax, 1                  ; syscall number for sys_write
+  mov rdi, 1                  ; file descriptor 1 (stdout)
+  mov rsi, text               ; message address
+  mov rdx, textLen                 ; message length
+  syscall
 
   ; Add 10000 to pin
-  mov eax, edi    ; Move the pin value to eax register
+  
+  mov rax, rdi    ; Move the pin value to rax register
   add eax, 10000  ; Add 10000 to eax register
 
   ; The calculated account is in eax register. Need to store it in rax register
