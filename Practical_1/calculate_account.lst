@@ -8,54 +8,48 @@
      8 00000000 722069733A0A       
      9                                  textLen equ $ - text
     10                                 
-    11                                 [section .text]
-    12                                 [global _start]
+    11                                 [section .bss]
+    12 00000000 <gap>                   asciiNumber resb 20
     13                                 
-    14                                 _start:
-    15                                  calculate_account:
+    14                                 [section .text]
+    15                                 [global _start]
     16                                 
-    17                                 
-    18                                 
+    17                                 _start:
+    18                                  calculate_account:
     19                                 
-    20                                 
-    21 00000000 55                      push rbp
-    22 00000001 4889E5                  mov rbp, rsp
+    20 00000000 55                      push rbp
+    21 00000001 4889E5                  mov rbp, rsp
+    22                                 
     23                                 
     24                                 
-    25                                 
-    26                                 
-    27 00000004 48C7C001000000          mov rax, 1
-    28 0000000B 48C7C701000000          mov rdi, 1
-    29 00000012 48C7C6[00000000]        mov rsi, text
-    30 00000019 48BA18000000000000-     mov rdx, textLen
-    31 00000019 00                 
-    32 00000023 0F05                    syscall
+    25 00000004 48C7C001000000          mov rax, 1
+    26 0000000B 48C7C701000000          mov rdi, 1
+    27 00000012 48C7C6[00000000]        mov rsi, text
+    28 00000019 48BA18000000000000-     mov rdx, textLen
+    29 00000019 00                 
+    30 00000023 0F05                    syscall
+    31                                 
+    32                                 
     33                                 
-    34                                 
-    35 00000025 4889E6                  mov rsi, rsp
+    34 00000025 48C7C0D2040000          mov rax, 1234
+    35 0000002C 480510270000            add rax, 10000
     36                                 
     37                                 
-    38 00000028 89F8                    mov eax, edi
-    39 0000002A 0510270000              add eax, 10000
+    38                                 
+    39                                 
     40                                 
-    41                                 
-    42 0000002F 4889F8                  mov rax, rdi
-    43                                 
-    44                                 
-    45 00000032 4831C9                  xor rcx, rcx
+    41 00000032 4831D2                  xor rdx, rdx
+    42 00000035 4889C7                  mov rdi, rax
+    43 00000038 48C7C000000000          mov rax, 0
+    44 0000003F 48C7C60A000000          mov rsi, 10
+    45 00000046 48F7F6                  div rsi
     46                                 
-    47                                  .convert_loop:
-    48 00000035 48FFCE                  dec rsi
-    49 00000038 48C7C20A000000          mov rdx, 10
-    50 0000003F 48F7F2                  div rdx
-    51 00000042 80C230                  add dl, '0'
-    52 00000045 8816                    mov [rsi], dl
-    53 00000047 4885C0                  test rax, rax
-    54 0000004A 75E7                    jnz .convert_loop
-    55                                 
-    56                                 
-    57                                 
-    58                                 
-    59                                 
-    60 0000004C C9                      leave
-    61 0000004D C3                      ret
+    47                                 
+    48                                 
+    49                                 
+    50 00000049 48C7C6[00000000]        mov rsi, asciiNumber
+    51 00000050 4883C030                add rax, '0'
+    52 00000054 8806                    mov [rsi], al
+    53 00000056 4889D6                  mov rsi, rdx
+    54 00000059 C9                      leave
+    55 0000005A C3                      ret
