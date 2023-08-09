@@ -1,10 +1,4 @@
-; This makes your function available to other files
 global calculate_balance
-
-section .data
-; ==========================
-; Your data goes here
-; ==========================
 
 section .text
 ; Calculate balance based on account number and pin
@@ -12,16 +6,24 @@ section .text
 ;   rdi - account number
 ;   rsi - pin
 ; Outputs:
-;   eax - balance
+;   rax - balance
 calculate_balance:
   push rbp
   mov rbp, rsp
+
+  ; Get account number (A) and pin (P)
+  mov rax, rdi ; rax = A
+  mov rbx, rsi ; rbx = P
+
+  ; Calculate B'
+  add rax, rbx       ; A + P
+  imul rax, rbx      ; (A + P) * P
+  xor rax, rdi       ; (A + P) * P ^ (P xor A)
+
+  ; Calculate B
+  mov rdx, 0          ; clear rdx
+  div qword 50000     ; rax / 50000
+  add rax, 50000      ; add 50000
   
-; Do not modify anything above this line unless you know what you are doing
-; ==========================
-; Your code goes here
-  mov eax, 0 ; This can be deleted, it just keeps function from causing a runtime error until completed
-; ==========================
-; Do not modify anything below this line unless you know what you are doing
   leave
   ret
