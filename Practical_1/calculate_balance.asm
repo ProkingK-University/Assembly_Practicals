@@ -12,18 +12,21 @@ calculate_balance:
   mov rbp, rsp
 
   ; Get account number (A) and pin (P)
-  mov rax, rdi ; rax = A
-  mov rbx, rsi ; rbx = P
+  mov rax, rdi          ; rax = A
 
   ; Calculate B'
-  add rax, rbx       ; A + P
-  imul rax, rbx      ; (A + P) * P
-  xor rax, rdi       ; (A + P) * P ^ (P xor A)
+  add rax, rsi          ; A + P
+  mul rsi               ; (A + P) * P
+  mov rcx, rsi          ; rcx = P
+  xor rcx, rdi          ; (P xor A)
+  and rax, rcx          ; (A + P) * P ^ (P xor A)
 
   ; Calculate B
-  mov rdx, 0          ; clear rdx
-  div qword 50000     ; rax / 50000
-  add rax, 50000      ; add 50000
+  mov rbx, 50000        ; rbx = 50000
+  mov rdx, 0            ; clear rdx
+  div rbx               ; rax / 50000
+  mov rax, rdx          ; rax = remainder
+  add rax, 50000        ; add 50000
   
   leave
   ret

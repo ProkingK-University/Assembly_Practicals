@@ -139,7 +139,7 @@ int main(void)
         test_cases[i].function();
     }*/
 
-    printf("The integer is: %d\n", get_pin());
+    test_calculate_balance();
 
     return 0;
 }
