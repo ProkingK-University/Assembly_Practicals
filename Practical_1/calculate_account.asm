@@ -9,9 +9,6 @@ section .bss
   asciiNumber resb 20         ; Space for ASCII digits (adjust size as needed)
 
 section .text
-  global _start
-
-_start:
   calculate_account:
 
   push rbp                    ; Save base pointer onto stack
