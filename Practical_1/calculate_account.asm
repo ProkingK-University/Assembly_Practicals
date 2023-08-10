@@ -24,7 +24,7 @@ section .text
 
   ; Add 10000 to pin to get the account number
 
-  mov rax, 1234               ; Move the pin value to rax register
+  mov rax, rdi               ; Move the pin value to rax register
   add rax, 10000              ; Add 10000 to rax register
 
   leave

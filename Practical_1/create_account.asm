@@ -16,19 +16,14 @@ section .data
   bal_ptr dq 0
   acc_num_val dd 0
   pin_val dd 0
+  balance_val dd 0
+  account_message db "Your account number is: ", 0
+  balance_message db "Your balance is: $", 0
+  pin_message db "Your obscured PIN is: ", 0
 ; ==========================
 
 section .text
 ; void create_account(char *account_number, char *obscured_pin, char *balance)
-; 
-; Inputs:
-;   rdi - account number
-;   rsi - pin
-;   rdx - balance
-; 
-; README:
-; A lot has been given to start you off. You should be able to complete this without fully understanding how
-; the functions work. I recommend using the foundation provided, however, you are free to change it as you see fit.
 create_account:
   push rbp
   mov rbp, rsp
@@ -54,26 +49,66 @@ create_account:
   mov edi, eax  ; set account number as the first argument to calculate balance
   mov esi, [pin_val]  ; set pin as the second argument to calculate balance
   call calculate_balance
+  mov [balance_val], rax  ; save balance
 
   ; Convert the balance to ascii and store it in the balance pointer
+  mov rsi, [bal_ptr]
+  mov rax, [balance_val]
+  call int_to_ascii
+  mov [rsi], rax
 
   ; Convert the pin to ascii and store it in the pin pointer
+  mov rsi, [pin_ptr]
+  mov eax, [pin_val]
+  call int_to_ascii
+  mov [rsi], rax
 
   ; Convert the account number to ascii and store it in the account number pointer
+  mov rsi, [acc_ptr]
+  mov eax, [acc_num_val]
+  call int_to_ascii
+  mov [rsi], rax
 
   ; Output account message
+  mov rax, 1                  ; syscall number for sys_write
+  mov rdi, 1                  ; file descriptor 1 (stdout)
+  mov rsi, account_message    ; message address
+  mov rdx, account_msg_len    ; message length
+  syscall
 
   ; Output account number
+  mov rsi, [acc_ptr]
+  call output_string
 
   ; Output balance message
+  mov rsi, balance_message
+  call output_string
 
   ; Output balance
+  mov rsi, [bal_ptr]
+  call output_string
 
   ; Obsfucate the pin
+  mov rsi, [pin_ptr]
+  call obscure_pin
 
   ; Output pin message
+  mov rsi, pin_message
+  call output_string
 
   ; Output obscured pin
+  mov rsi, [pin_ptr]
+  call output_string
 
   leave
+  ret
+
+; Converts an integer to ASCII and returns the result in rax
+int_to_ascii:
+  ; your code for integer to ASCII conversion here
+  ret
+
+; Outputs a null-terminated string pointed to by rsi
+output_string:
+  ; your code for outputting string here
   ret
