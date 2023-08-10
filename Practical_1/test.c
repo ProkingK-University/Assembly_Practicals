@@ -125,21 +125,25 @@ TestCase test_cases[] = {
     {test_greeting, "greeting"},
     {test_get_pin, "get_pin"},
     {test_calculate_account, "calculate_account"},
-    {test_calculate_balance, "calculate_balance"},
-    {test_obscure_pin, "obscure_pin"},
-    {test_create_account, "create_account"},
+    {test_calculate_balance, "calculate_balance"}
+    // {test_obscure_pin, "obscure_pin"},
+    // {test_create_account, "create_account"},
 };
 
 int main(void)
 {
-    /*size_t num_tests = sizeof(test_cases) / sizeof(TestCase);
+    size_t num_tests = sizeof(test_cases) / sizeof(TestCase);
     for (size_t i = 0; i < num_tests; i++)
     {
         printf("Running test %s...\n", test_cases[i].name);
         test_cases[i].function();
-    }*/
+    }
 
+<<<<<<< HEAD
     test_calculate_balance();
+=======
+    //printf("The integer is: %d\n", get_pin());
+>>>>>>> Joshua
 
     return 0;
 }
