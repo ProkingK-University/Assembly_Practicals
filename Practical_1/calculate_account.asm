@@ -2,30 +2,26 @@
 global calculate_account
 
 section .data
-  text db 'Your account number is:',10
-  textLen equ $ - text
-
-section .bss
-  asciiNumber resb 20         ; Space for ASCII digits (adjust size as needed)
+; ==========================
+; Your data goes here
+; ==========================
 
 section .text
-  calculate_account:
+; Inputs:
+;   rdi - pin
+; Outputs:
+;   eax - balance
+calculate_account:
+  push rbp
+  mov rbp, rsp
 
-  push rbp                    ; Save base pointer onto stack
-  mov rbp, rsp                ; Set base pointer to current value on the stack
-
-  ; Print the "Your account number is: " message
-
-  mov rax, 1                  ; syscall number for sys_write
-  mov rdi, 1                  ; file descriptor 1 (stdout)
-  mov rsi, text               ; message address
-  mov rdx, textLen            ; message length
-  syscall
-
-  ; Add 10000 to pin to get the account number
-
-  mov rax, rdi               ; Move the pin value to rax register
-  add rax, 10000              ; Add 10000 to rax register
+; Do not modify anything above this line unless you know what you are doing
+; ==========================
+; Your code goes here
+  mov eax, edi
+  add eax, 10000
+; ==========================
+; Do not modify anything below this line unless you know what you are doing
 
   leave
   ret
