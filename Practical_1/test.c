@@ -139,11 +139,7 @@ int main(void)
         test_cases[i].function();
     }
 
-<<<<<<< HEAD
-    test_calculate_balance();
-=======
     //printf("The integer is: %d\n", get_pin());
->>>>>>> Joshua
 
     return 0;
 }
