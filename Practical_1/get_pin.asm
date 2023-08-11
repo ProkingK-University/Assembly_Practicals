@@ -58,5 +58,6 @@ get_pin:                      ; uint32_t get_pin()
   jmp .loop                   ; Restart the loop
 
 .end_loop:
+  
   leave
   ret

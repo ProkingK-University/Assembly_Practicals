@@ -7,6 +7,8 @@ ASM_OBJECTS := $(addprefix $(OBJ_DIR)/, $(notdir $(ASM_SOURCES:.asm=.o)))
 C_TEST_OBJECTS := $(addprefix $(OBJ_DIR)/, $(notdir $(C_TEST_SOURCES:.c=.o)))
 VPATH := src:src/helpers:test
 
+VALGRIND_FLAGS := --leak-check=full --show-leak-kinds=all
+
 all: $(OBJ_DIR) $(BIN_DIR) $(EXECUTABLE)
 
 $(EXECUTABLE): $(ASM_OBJECTS) $(C_TEST_OBJECTS)
@@ -29,6 +31,9 @@ run: $(EXECUTABLE)
 
 debug: $(EXECUTABLE)
 	gdb $(EXECUTABLE)
+
+valgrind: $(EXECUTABLE)
+	valgrind $(VALGRIND_FLAGS) ./$(EXECUTABLE)
 
 clean:
 	rm -f $(ASM_OBJECTS) $(C_TEST_OBJECTS) $(EXECUTABLE)
