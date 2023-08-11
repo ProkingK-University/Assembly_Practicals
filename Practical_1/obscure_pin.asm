@@ -1,47 +1,44 @@
-global obscure_pin
-
 section .data
-; ==========================
-; Your data goes here
-  me db ''
-; ==========================
+    mask db 0xF         ; Mask value for XOR operation
+    zero db 48          ; ASCII value of digit '0'
 
-; void obscure_pin(char* pin)
-; Obscures a 4-digit ASCII PIN in place.
-; Assumes pin is in rdi.
 section .text
+global obscure_pin
 obscure_pin:
-  push rbp
-  mov rbp, rsp
-; Do not modify anything above this line unless you know what you are doing
-; ==========================
-; Your code goes here
-  xor rax, rax                ;Clear rax register
-  xor rcx, rcx                ;Clear rcx register
-  mov rcx, 0                  ;Set count to 0
+    push rbp
+    mov rbp, rsp
 
-  ; obscure digits
-    .loop:
-  cmp byte[rdi], 0            ; Check if it's null-terminator
-  je .end_loop                ; End the loop
-  cmp byte[rdi], 10           ; Check if it's a newline character
-  je .end_loop                ; End the loop
+    ; Load PIN digits
+    mov rsi, rdi        ; Copy the pointer to rsi for processing
+    mov r8b, byte [mask] ; Load the mask value into r8b for XOR operation
+    
+    xor rcx, rcx        ; Clear rcx (loop counter)
+    
+    ; Store the obscured PIN in reverse order
+.obfuscate_loop:
+    mov al, byte [rsi + rcx] ; Load the current character into AL
+    cmp al, 0           ; Check for null terminator
+    je .reverse_loop    ; If null terminator is reached, proceed to reversal
+    
+    sub al, byte [zero] ; Convert ASCII to numerical value (di - 48)
+    xor al, r8b         ; Perform XOR operation with the mask (0xF)
+    add al, byte [zero] ; Convert back to ASCII representation (d'i + 48)
+    mov byte [rsi + rcx], al ; Store the result back in the PIN string
+    
+    inc rcx             ; Increment the loop counter
+    jmp .obfuscate_loop
 
-  sub  byte[rdi], '0'         ; Convert ASCII code to digit value
-  xor  byte[rdi], 0xF         ; XOR  with the hexdecimal of decimal number 15
-  add  byte[rdi], 48          ; Add the digit value
-  inc rdi                     ; Move to the next character
-  inc rcx                     ; Increment count
-  jmp .loop                   ; Loop
-  .end_loop:
-    std                       ; Set Direction Flag(DF) = 1. Addresses will be decreased.
+.reverse_loop:
+    dec rcx             ; Decrement the loop counter
+    js .done             ; If all characters have been processed, exit
+    
+    mov al, byte [rsi + rcx] ; Load the current character into AL
+    mov ah, byte [rsi + 6]   ; Load the corresponding character from the opposite end
+    mov byte [rsi + rcx], ah ; Swap the characters
+    mov byte [rsi + 3], al   ; Swap the characters
+    
+    jmp .reverse_loop
 
-  lea rsi, [rdi]              ;Data to move into rdi
-  lea rdi, [rdi]              ;Destination string to swap with
-
-  rep stosd                   ;It just works to reverse. Don't know the specifics
-; ==========================
-; Do not modify anything below this line unless you know what you are doing
-
-  leave
-  ret
+.done:
+    pop rbp
+    ret
