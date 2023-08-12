@@ -12,12 +12,10 @@ section .data
   acc_ptr dq 0
   pin_ptr dq 0
   bal_ptr dq 0
-  obs_ptr dq 0
 
   acc_val dq 0
   pin_val dq 0
   bal_val dq 0
-  obs_val dq 0
   
   bal_msg db "Your balance is:", 10
   pin_msg db "Your obscured PIN is:", 10
@@ -47,10 +45,6 @@ create_account:
   call get_pin        ; Call get_pin function
   mov  [pin_val], eax ; save pin
 
-  ; mov edi, [pin_val]
-  ; call obscure_pin
-  ; mov [obs_val], eax
-
   ; Calculate the account number
   mov  edi, [pin_val]
   call calculate_account
@@ -77,10 +71,9 @@ create_account:
   lea esi, [acc_ptr]
   call to_string
 
-  ; Convert the pin to ascii and store it in the pin pointer
-  mov edi, [obs_val]
-  lea esi, [obs_ptr]
-  call to_string
+  ; Obscure pin
+  mov edi, pin_ptr
+  call obscure_pin
 
   ; Output account message
   push dword 24
@@ -108,8 +101,8 @@ create_account:
   call print
 
   ; Output obscured pin 
-  push dword 4
-  push dword obs_ptr
+  push dword 5
+  push dword pin_ptr
   call print
 
 leave
