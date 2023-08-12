@@ -80,10 +80,6 @@ create_account:
   mov rsi, [acc_ptr]
   call int_to_string
 
-  push dword 6
-  push qword [pin_ptr]
-  call print
-
   ; Obscure pin
   mov rdi, [pin_ptr]
   call obscure_pin
