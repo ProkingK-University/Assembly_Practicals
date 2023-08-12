@@ -1,3 +1,5 @@
+global obscure_pin
+
 section .data
 ; ==========================
 ; Your data goes here
@@ -6,6 +8,9 @@ section .bss
   pin resb 5
 ; ==========================
 
+; void obscure_pin(char* pin)
+; Obscures a 4-digit ASCII PIN in place.
+; Assumes pin is in rdi.
 section .text
 obscure_pin:
   push rbp
@@ -69,6 +74,5 @@ obscure_pin:
 ; ==========================
 ; Do not modify anything below this line unless you know what you are doing
 
-    ret
-
-
+  leave
+  ret
