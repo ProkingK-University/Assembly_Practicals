@@ -17,17 +17,10 @@ section .data
   pin_val dq 0
   bal_val dq 0
 
-  acc_par dq 0
-  pin_par dq 0
-  bal_par dq 0
-  
+  newline db 10 
   bal_msg db "Your balance is:", 0
   pin_msg db "Your obscured PIN is:", 0
   acc_msg db "Your account number is:", 0
-
-  text times 5 db 0
-
-  newline db 10 
 
 section .text
 ; void create_account(char *account_number, char *obscured_pin, char *balance)
@@ -45,10 +38,6 @@ create_account:
   mov qword [acc_ptr], rdi
   mov qword [pin_ptr], rsi
   mov qword [bal_ptr], rdx
-
-  mov qword [acc_par], rdi
-  mov qword [pin_par], rsi
-  mov qword [bal_par], rdx
 
   ; Greet the user (Diplomacy)
   call greeting
@@ -90,7 +79,7 @@ create_account:
   call print
 
   ; Output account number
-  push dword 6
+  push dword 7
   push qword [acc_ptr]
   call print
 
@@ -100,7 +89,7 @@ create_account:
   call print
 
   ; Output balance
-  push dword 6
+  push dword 7
   push qword [bal_ptr]
   call print
 
@@ -110,7 +99,7 @@ create_account:
   call print
 
   ; Output obscured pin 
-  push dword 5
+  push dword 6
   push qword [pin_ptr]
   call print
 
@@ -149,15 +138,6 @@ int_to_string:
   xor rcx, rcx
   mov eax, edi
 
-  ; Handle negative numbers
-  cmp eax, 0
-  jge .positive
-  neg eax
-  mov byte [rsi], '-'
-  inc rsi
-
-.positive:
-  ; Convert integer to string in reverse order
 .reverse:
   xor edx, edx
   mov r8, 10
