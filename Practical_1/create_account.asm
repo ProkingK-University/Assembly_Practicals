@@ -16,10 +16,18 @@ section .data
   acc_val dq 0
   pin_val dq 0
   bal_val dq 0
+
+  acc_par dq 0
+  pin_par dq 0
+  bal_par dq 0
   
-  bal_msg db "Your balance is:", 10
-  pin_msg db "Your obscured PIN is:", 10
-  acc_msg db "Your account number is:", 10
+  bal_msg db "Your balance is:", 0
+  pin_msg db "Your obscured PIN is:", 0
+  acc_msg db "Your account number is:", 0
+
+  text times 5 db 0
+
+  newline db 10 
 
 section .text
 ; void create_account(char *account_number, char *obscured_pin, char *balance)
@@ -37,6 +45,10 @@ create_account:
   mov qword [acc_ptr], rdi
   mov qword [pin_ptr], rsi
   mov qword [bal_ptr], rdx
+
+  mov qword [acc_par], rdi
+  mov qword [pin_par], rsi
+  mov qword [bal_par], rdx
 
   ; Greet the user (Diplomacy)
   call greeting
@@ -56,23 +68,24 @@ create_account:
   call calculate_balance
   mov [bal_val], eax
 
-  ; Convert the balance to ascii and store it in the balance pointer 
-  mov edi, [bal_val]
-  lea esi, [bal_ptr]
-  call to_string
+  mov rdi, [bal_val]
+  mov rsi, [bal_ptr]
+  call int_to_string
 
-  ; Convert the pin to ascii and store it in the pin pointer
-  mov edi, [pin_val]
-  lea esi, [pin_ptr]
-  call to_string
+  mov rdi, [pin_val]
+  mov rsi, [pin_ptr]
+  call int_to_string
 
-  ; Convert the account number to ascii and store it in the account number pointer
-  mov edi, [acc_val]
-  lea esi, [acc_ptr]
-  call to_string
+  mov rdi, [acc_val]
+  mov rsi, [acc_ptr]
+  call int_to_string
+
+  push dword 6
+  push qword [pin_ptr]
+  call print
 
   ; Obscure pin
-  mov edi, pin_ptr
+  mov rdi, [pin_ptr]
   call obscure_pin
 
   ; Output account message
@@ -82,7 +95,7 @@ create_account:
 
   ; Output account number
   push dword 6
-  push dword acc_ptr
+  push qword [acc_ptr]
   call print
 
   ; Output balance message 
@@ -90,9 +103,9 @@ create_account:
   push dword bal_msg
   call print
 
-  ; Output balance 
+  ; Output balance
   push dword 6
-  push dword bal_ptr
+  push qword [bal_ptr]
   call print
 
   ; Output obscured pin message
@@ -102,55 +115,8 @@ create_account:
 
   ; Output obscured pin 
   push dword 5
-  push dword pin_ptr
+  push qword [pin_ptr]
   call print
-
-leave
-ret
-
-to_string:
-  ; rdi - integer value
-  ; rsi - buffer to store result
-  push rbp
-  mov  rbp, rsp
-  sub  rsp, 16
-
-  mov rax, rdi
-  mov rbx, 10
-  mov rcx, rsi
-
-.loop:
-  xor rdx,   rdx
-  div rbx
-  add dl,    '0'
-  mov [rcx], dl
-  inc rcx
-  cmp rax,   0
-  jne .loop
-
-  ; reverse the order of the digits in the buffer
-  mov rdi, rsi ; set RDI to the start of the buffer
-  mov rsi, rcx ; set RSI to the end of the buffer
-  dec rsi      ; move back one byte to skip the null terminator
-
-.reverse_loop:
-  cmp rdi, rsi ; check if we have reached the middle of the buffer
-  jge .done
-
-  mov al, [rdi] ; swap the bytes at RDI and RSI
-  mov ah, [rsi]
-  mov [rdi], ah
-  mov [rsi], al
-
-  inc rdi      ; move RDI forward one byte
-  dec rsi      ; move RSI back one byte
-
-  jmp .reverse_loop
-
-.done:
-  mov byte [rcx], 10 ; add newline
-  inc rcx
-  mov byte [rcx], 0 ; add null terminator
 
   leave
   ret
@@ -165,6 +131,56 @@ print:
   mov rsi, [rbp + 16] ; string to print
   mov rdx, [rbp + 24] ; length of string
   syscall
+
+  ; Add a newline
+  mov rax, 1          ; write system call number
+  mov rdi, 1          ; file descriptor for standard output
+  mov rsi, newline    ; address of newline string
+  mov rdx, 1          ; length of newline string
+  syscall
+
+  leave
+  ret
+
+int_to_string:
+  push rbp
+  mov rbp, rsp
+  push rbx
+  push rcx
+  push rdx
+
+  xor rbx, rbx
+  xor rcx, rcx
+  mov eax, edi
+
+  ; Handle negative numbers
+  cmp eax, 0
+  jge .positive
+  neg eax
+  mov byte [rsi], '-'
+  inc rsi
+
+.positive:
+  ; Convert integer to string in reverse order
+.reverse:
+  xor edx, edx
+  mov r8, 10
+  div r8
+  add dl, '0'
+  push rdx
+  inc rcx
+  cmp eax, 0
+  jne .reverse
+
+  ; Reverse the string to get the final result
+.reverse_loop:
+  pop rax
+  mov [rsi + rbx], al
+  inc rbx
+  loop .reverse_loop
+
+  ; Add null terminator to the end of the string
+  mov byte [rsi + rbx], 0
 
   leave
   ret
