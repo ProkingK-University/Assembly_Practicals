@@ -1,33 +1,39 @@
 ; This tells the function that these exist outside of this file
-extern greeting
-extern get_pin
-extern obscure_pin
-extern calculate_balance
-extern calculate_account
+extern  get_pin
+extern  greeting
+extern  obscure_pin
+extern  calculate_balance
+extern  calculate_account
 
 ; This makes your function available to other files
-global create_account
+global  create_account
 
 section .data
-; ==========================
-; Your data goes here
   acc_ptr dq 0
   pin_ptr dq 0
   bal_ptr dq 0
-  acc_num_val dd 0
-  pin_val dd 0
-  buffer resb 11                ; Reserve space for the ASCII representation of values
-  acc_message db "Account Number: ", 0
-  bal_message db "Balance: ", 0
-  pin_message db "Obscured PIN: ", 0
-; ==========================
+
+  acc_val dq 0
+  pin_val dq 0
+  bal_val dq 0
+
+  newline db 10 
+  bal_msg db "Your balance is:", 0
+  pin_msg db "Your obscured PIN is:", 0
+  acc_msg db "Your account number is:", 0
 
 section .text
 ; void create_account(char *account_number, char *obscured_pin, char *balance)
+;
+; Inputs:
+;   rdi - account number
+;   rsi - pin
+;   rdx - balance
+
 create_account:
   push rbp
-  mov rbp, rsp
-  sub rsp, 32
+  mov  rbp, rsp
+  sub  rsp, 32
 
   mov qword [acc_ptr], rdi
   mov qword [pin_ptr], rsi
@@ -37,124 +43,120 @@ create_account:
   call greeting
 
   ; Get the pin as a 32 bit integer
-  call get_pin
-  mov [pin_val], eax
+  call get_pin        ; Call get_pin function
+  mov  [pin_val], eax ; save pin
 
   ; Calculate the account number
-  mov edi, eax
+  mov  edi, [pin_val]
   call calculate_account
-  mov [acc_num_val], eax
+  mov  [acc_val], eax    ; save account number
 
   ; Calculate the balance
-  mov edi, eax
-  mov esi, [pin_val]
+  mov  edi, [acc_val]         ; set account number as the first argument to calculate balance
+  mov  esi, [pin_val]    ; set pin as the second argument to calculate balance
   call calculate_balance
+  mov [bal_val], eax
 
-  ; Convert the balance to ASCII and store it in the balance pointer
-  mov eax, edi
-  mov rsi, buffer
-  call int_to_ascii
+  mov rdi, [bal_val]
   mov rsi, [bal_ptr]
-  mov rdi, buffer
-  call copy_string
+  call int_to_string
 
-  ; Convert the pin to ASCII and store it in the pin pointer
-  mov eax, [pin_val]
-  mov rsi, buffer
-  call int_to_ascii
+  mov rdi, [pin_val]
   mov rsi, [pin_ptr]
-  mov rdi, buffer
-  call copy_string
+  call int_to_string
 
-  ; Convert the account number to ASCII and store it in the account number pointer
-  mov eax, [acc_num_val]
-  mov rsi, buffer
-  call int_to_ascii
+  mov rdi, [acc_val]
   mov rsi, [acc_ptr]
-  mov rdi, buffer
-  call copy_string
+  call int_to_string
 
-  ; Output account message
-  mov rdi, acc_message
-  call print_string
-
-  ; Output account number
-  mov rsi, [acc_ptr]
-  call print_string
-
-  ; Output balance message
-  mov rdi, bal_message
-  call print_string
-
-  ; Output balance
-  mov rsi, [bal_ptr]
-  call print_string
-
-  ; Obscure the pin
+  ; Obscure pin
   mov rdi, [pin_ptr]
   call obscure_pin
 
-  ; Output pin message
-  mov rdi, pin_message
-  call print_string
+  ; Output account message
+  push dword 24
+  push dword acc_msg
+  call print
 
-  ; Output obscured pin
-  mov rsi, [pin_ptr]
-  call print_string
+  ; Output account number
+  push dword 7
+  push qword [acc_ptr]
+  call print
+
+  ; Output balance message 
+  push dword 17
+  push dword bal_msg
+  call print
+
+  ; Output balance
+  push dword 7
+  push qword [bal_ptr]
+  call print
+
+  ; Output obscured pin message
+  push dword 22
+  push dword pin_msg
+  call print
+
+  ; Output obscured pin 
+  push dword 6
+  push qword [pin_ptr]
+  call print
 
   leave
   ret
 
-; Convert an integer to ASCII and store it in a buffer
-; Inputs:
-;   rax - integer value
-;   rsi - buffer address
-int_to_ascii:
+print:
+  ; rdi - string to print
+  push rbp
+  mov  rbp, rsp
+
+  mov rax, 1          ; write system call number
+  mov rdi, 1          ; file descriptor for standard output
+  mov rsi, [rbp + 16] ; string to print
+  mov rdx, [rbp + 24] ; length of string
+  syscall
+
+  ; Add a newline
+  mov rax, 1          ; write system call number
+  mov rdi, 1          ; file descriptor for standard output
+  mov rsi, newline    ; address of newline string
+  mov rdx, 1          ; length of newline string
+  syscall
+
+  leave
+  ret
+
+int_to_string:
+  push rbp
+  mov rbp, rsp
   push rbx
   push rcx
   push rdx
 
-  mov rcx, 10     ; Divisor
-  xor rdx, rdx    ; Clear any previous remainder
-  div rcx         ; Divide rax by 10, result in rax, remainder in rdx
+  xor rbx, rbx
+  xor rcx, rcx
+  mov eax, edi
 
-.reverse_loop:
-  add dl, '0'     ; Convert remainder to ASCII
-  dec rsi         ; Move buffer pointer backwards
-  mov [rsi], dl   ; Store ASCII character in buffer
-  xor rdx, rdx    ; Clear any previous remainder
-  test rax, rax   ; Check if quotient is zero
-  jz .end_reverse
-  div rcx          ; Divide rax by 10, result in rax, remainder in rdx
-  jmp .reverse_loop
-
-.end_reverse:
-  pop rdx
-  pop rcx
-  pop rbx
-  ret
-
-; Subroutine to copy a null-terminated string
-; Inputs:
-;   rdi - source address
-;   rsi - destination address
-copy_string:
-  xor rcx, rcx      ; Clear counter
-.copy_loop:
-  mov al, byte [rdi + rcx]    ; Load byte from source
-  mov byte [rsi + rcx], al    ; Store byte to destination
+.reverse:
+  xor edx, edx
+  mov r8, 10
+  div r8
+  add dl, '0'
+  push rdx
   inc rcx
-  cmp al, 0                   ; Check for null-terminator
-  jnz .copy_loop
-  ret
+  cmp eax, 0
+  jne .reverse
 
-; Subroutine to print a null-terminated string
-; Input:
-;   rdi - string address
-print_string:
-  mov rax, 1                  ; syscall number for sys_write
-  mov rsi, rdi                ; message address
-  mov rdx, 0                  ; message length (will be calculated by the syscall)
-  xor rax, rax                ; clear rax to avoid accidental overwrite
-  syscall
+  ; Reverse the string to get the final result
+.reverse_loop:
+  pop rax
+  mov [rsi + rbx], al
+  inc rbx
+  loop .reverse_loop
+
+  ; Add null terminator to the end of the string
+  mov byte [rsi + rbx], 0
+
+  leave
   ret
