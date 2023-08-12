@@ -2,10 +2,11 @@
 global get_pin
 
 section .data
-  prompt db "Enter 4-digit PIN: ", 0
+  prompt db "Enter 4-digit PIN: "
 
 section .bss
-  pin resb 5                  ; Reserve space input
+  pin resb 4                  ; Reserve space input
+  edl resb 4                  ; Reserve endl space
 
 section .text
 get_pin:                      ; uint32_t get_pin()
@@ -17,7 +18,7 @@ get_pin:                      ; uint32_t get_pin()
   mov rax, 1                  ; syscall number for sys_write
   mov rdi, 1                  ; file descriptor 1 (stdout)
   mov rsi, prompt             ; message address
-  mov rdx, 20                 ; message length
+  mov rdx, 19                 ; message length
   syscall
 
 ; Read the pin from stdin and store it in a buffer
@@ -25,7 +26,15 @@ get_pin:                      ; uint32_t get_pin()
   mov rax, 0                  ; syscall number for sys_read
   mov rdi, 0                  ; file descriptor 0 (stdin)
   mov rsi, pin                ; buffer address
-  mov rdx, 5                  ; buffer size
+  mov rdx, 4                  ; buffer size
+  syscall
+
+; Remove endl
+
+  mov rax, 0                  ; syscall number for sys_read
+  mov rdi, 0                  ; file descriptor 0 (stdin)
+  mov rsi, edl                ; buffer address
+  mov rdx, 1
   syscall
 
 ; Convert the pin to an integer
