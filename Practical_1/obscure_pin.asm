@@ -3,7 +3,9 @@ global obscure_pin
 section .data
 ; ==========================
 ; Your data goes here
-  me db ''
+
+section .bss
+  pin resb 5
 ; ==========================
 
 ; void obscure_pin(char* pin)
@@ -16,30 +18,59 @@ obscure_pin:
 ; Do not modify anything above this line unless you know what you are doing
 ; ==========================
 ; Your code goes here
-  xor rax, rax                ;Clear rax register
   xor rcx, rcx                ;Clear rcx register
   mov rcx, 0                  ;Set count to 0
+  mov r13d, pin               ;Store reserved address of bits into register
+
+
+  ; load PIN digits in
+  .meloop:
+  movzx r8, byte[rdi+rcx]
+  cmp  r8, 0                  ; Check if it's null-terminator
+  je .less                    ; End the loop
+  cmp   r8, 10                ; Check if it's a newline character
+  je .less                    ; End the loop
+  mov [pin+rcx],r8            ; Move value into memory address
+  inc rcx                     ; Increment Count for next memory address
+  jmp .meloop                 ; Repeat loop
+
+  .less:
+  xor rcx,rcx                 ; Clear Register for count
+  mov rcx, 0                  ; Set Count_1 to 0.
+
 
   ; obscure digits
-    .loop:
-  cmp byte[rdi], 0            ; Check if it's null-terminator
+  .loop:
+  cmp  byte[pin+rcx], 0       ; Check if it's null-terminator
   je .end_loop                ; End the loop
-  cmp byte[rdi], 10           ; Check if it's a newline character
+  cmp   byte[pin+rcx], 10     ; Check if it's a newline character
   je .end_loop                ; End the loop
 
-  sub  byte[rdi], '0'         ; Convert ASCII code to digit value
-  xor  byte[rdi], 0xF         ; XOR  with the hexdecimal of decimal number 15
-  add  byte[rdi], 48          ; Add the digit value
-  inc rdi                     ; Move to the next character
-  inc rcx                     ; Increment count
-  jmp .loop                   ; Loop
+  sub  byte[pin+rcx], '0'    ; Convert ASCII code to digit value
+  xor  byte[pin+rcx], 0xF    ; XOR  with the hexdecimal of decimal number 15
+  add  byte[pin+rcx], 48     ; Add the digit value
+
+  inc rcx                    ; Increment count to get next bit address.
+  jmp .loop                  ; Repeat loop
+
   .end_loop:
-    std                       ; Set Direction Flag(DF) = 1. Addresses will be decreased.
+  dec rcx                    ; Decrement count by 1 to valid,non-null terminator
+  xor r10,r10                ; Clearing register for use.
+  xor r15b,r15b              ; Clearing register for use.
+  mov r10, 0                 ; Set Count_2 in register to 0.
 
-  lea rsi, [rdi]              ;Data to move into rdi
-  lea rdi, [rdi]              ;Destination string to swap with
+  ; reverse obscured digits
+  .oloop:
+  cmp  rcx, -1               ; End of loop condition
+  je .free                   ; End of loop
+  mov r15b, byte[pin+rcx]    ; Move value into temporary register
+  mov byte[rdi+r10],r15b     ; Move from temp register to corresponding valid address in register
+  dec rcx                    ; Decrease count_1
+  inc r10                    ; Increase count_2
+  jmp .oloop                 ; Repeat loop
 
-  rep stosd                   ;It just works to reverse. Don't know the specifics
+
+  .free
 ; ==========================
 ; Do not modify anything below this line unless you know what you are doing
 
