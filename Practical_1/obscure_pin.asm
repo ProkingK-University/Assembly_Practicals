@@ -1,7 +1,5 @@
 global obscure_pin
 
-global obscure_pin
-
 section .data
 ; ==========================
 ; Your data goes here
@@ -71,8 +69,10 @@ obscure_pin:
   inc r10                    ; Increase count_2
   jmp .oloop                 ; Repeat loop
 
+
   .free
 ; ==========================
 ; Do not modify anything below this line unless you know what you are doing
+
   leave
   ret
