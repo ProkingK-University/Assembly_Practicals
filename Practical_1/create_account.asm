@@ -57,14 +57,17 @@ create_account:
   call calculate_balance
   mov [bal_val], eax
 
+  ; Convert balance to ASCII
   mov rdi, [bal_val]
   mov rsi, [bal_ptr]
   call int_to_string
 
+  ; Convert pin to ASCII
   mov rdi, [pin_val]
   mov rsi, [pin_ptr]
   call int_to_string
 
+  ; Convert acc_val to ASCII
   mov rdi, [acc_val]
   mov rsi, [acc_ptr]
   call int_to_string
