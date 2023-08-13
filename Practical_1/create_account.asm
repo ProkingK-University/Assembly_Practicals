@@ -18,9 +18,9 @@ section .data
   bal_val dq 0
 
   newline db 10 
-  bal_msg db "Your balance is:", 0
-  pin_msg db "Your obscured PIN is:", 0
-  acc_msg db "Your account number is:", 0
+  bal_msg db "Your balance is:"
+  pin_msg db "Your obscured PIN is:"
+  acc_msg db "Your account number is:"
 
 section .text
 ; void create_account(char *account_number, char *obscured_pin, char *balance)
@@ -74,32 +74,32 @@ create_account:
   call obscure_pin
 
   ; Output account message
-  push dword 24
+  push dword 23
   push dword acc_msg
   call print
 
   ; Output account number
-  push dword 7
+  push dword 5
   push qword [acc_ptr]
   call print
 
   ; Output balance message 
-  push dword 17
+  push dword 16
   push dword bal_msg
   call print
 
   ; Output balance
-  push dword 7
+  push dword 5
   push qword [bal_ptr]
   call print
 
   ; Output obscured pin message
-  push dword 22
+  push dword 21
   push dword pin_msg
   call print
 
   ; Output obscured pin 
-  push dword 6
+  push dword 4
   push qword [pin_ptr]
   call print
 
