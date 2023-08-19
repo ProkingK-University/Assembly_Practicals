@@ -90,3 +90,11 @@ char *encryptString(char **vigenereSquare, char *keyword, char *plaintext)
 
     return encryptedText;
 }
+
+// Compile:
+// gcc main.c -o main
+
+// Run
+// ./main
+
+// You should be ashamed if you do not know this :D
