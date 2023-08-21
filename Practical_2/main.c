@@ -23,7 +23,6 @@ int main()
     printf("Keyword: %s\n", keyword);
     printf("Encrypted Text: %s\n", encryptedText);
 
-    // Free memory
     for (int i = 0; i < 26; i++)
     {
         free(vigenereSquare[i]);
@@ -34,7 +33,6 @@ int main()
     return 0;
 }
 
-// Function to remove spaces from a string
 void removeSpaces(char *str)
 {
     int length = strlen(str);
@@ -49,7 +47,6 @@ void removeSpaces(char *str)
     str[j] = '\0';
 }
 
-// Function to create and populate the Vigenère Square
 char **populateMatrix()
 {
     char **vigenereSquare = (char **)malloc(26 * sizeof(char *));
@@ -64,7 +61,6 @@ char **populateMatrix()
     return vigenereSquare;
 }
 
-// Function to find the intersection from the Vigenère Square
 char encryptChar(char **vigenereSquare, char keywordChar, char plaintextChar)
 {
     int row = keywordChar - 'A';
@@ -72,7 +68,6 @@ char encryptChar(char **vigenereSquare, char keywordChar, char plaintextChar)
     return vigenereSquare[row][col];
 }
 
-// Function to encrypt a string using the Vigenère cipher
 char *encryptString(char **vigenereSquare, char *keyword, char *plaintext)
 {
     int keywordLength = strlen(keyword);
@@ -90,11 +85,3 @@ char *encryptString(char **vigenereSquare, char *keyword, char *plaintext)
 
     return encryptedText;
 }
-
-// Compile:
-// gcc main.c -o main
-
-// Run
-// ./main
-
-// You should be ashamed if you do not know this :D

@@ -12,6 +12,8 @@ populateMatrix.o: populateMatrix.asm
 run: a.out
 	./a.out
 
+valgrind: a.out
+	valgrind ./a.out
+
 clean:
 	rm -rf *.o a.out
-
