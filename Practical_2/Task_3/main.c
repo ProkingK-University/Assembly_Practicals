@@ -2,12 +2,21 @@
 #include <stdlib.h>
 
 extern char** populateMatrix();
-extern char encryptChar(char**, char, char);
-extern char* encryptString(char**, char*, char*);
+//extern char encryptChar(char**, char, char);
+//extern char* encryptString(char**, char*, char*);
 
 int main()
 {
-    char* output = 0;
+    char** matrix = populateMatrix();
+
+    for (int i = 0; i < 26; ++i) {
+        for (int j = 0; j < 26; ++j) {
+            printf("'%c' ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+    
+    /*char* output = 0;
 
     char pt[50];
     char kw[50];
@@ -61,7 +70,7 @@ int main()
     output = encryptString(0, pt, kw);
     printf("%s\n", output);
 
-    return 0;
+    return 0;*/
 }
 /*
 ATTACK AT DAWN -- LEMON --> LXFOPVEFRNHR
