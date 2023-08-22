@@ -1,4 +1,7 @@
+*.o
 bin
 obj
+main
+a.out
 test.c
 .vscode
