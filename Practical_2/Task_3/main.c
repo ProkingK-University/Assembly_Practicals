@@ -46,6 +46,10 @@ int main()
     output = encryptString(0, pt, kw);
     printf("%s\n", output);*/
 
+    // check if we are allowed to pass in matrix
+    // external functions
+    // add remove spaces
+
     sprintf(pt, "OHWHYOHWHYDOWEWAIT");
     sprintf(kw, "POTATO");
     printf("%s", pt);
