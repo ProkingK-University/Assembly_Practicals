@@ -2,19 +2,37 @@
 #include <stdlib.h>
 
 extern char** populateMatrix();
-//extern char encryptChar(char**, char, char);
+extern char encryptChar(char**, char, char);
 //extern char* encryptString(char**, char*, char*);
 
 int main()
 {
     char** matrix = populateMatrix();
 
-    for (int i = 0; i < 26; ++i) {
+    /*for (int i = 0; i < 26; ++i) {
         for (int j = 0; j < 26; ++j) {
             printf("'%c' ", matrix[i][j]);
         }
         printf("\n");
+    }*/
+
+    char input = 'B';
+    char key = 'Z';
+    printf("%c - %c -> %c\n", input, key, encryptChar(matrix, input, key));
+    input = 'Z';
+    key = 'Z';
+    printf("%c - %c -> %c\n", input, key, encryptChar(matrix, input, key));
+    input = 'A';
+    key = 'L';
+    printf("%c - %c -> %c\n", input, key, encryptChar(matrix, input, key));
+    input = 'O';
+    key = 'P';
+    printf("%c - %c -> %c\n", input, key, encryptChar(matrix, input, key));
+
+    for (int i = 0; i < 26; ++i) {
+        free(matrix[i]);
     }
+    free(matrix);
     
     /*char* output = 0;
 
@@ -68,9 +86,9 @@ int main()
     printf("%s", pt);
     printf(" -- %s --> ", kw);
     output = encryptString(0, pt, kw);
-    printf("%s\n", output);
+    printf("%s\n", output);*/
 
-    return 0;*/
+    return 0;
 }
 /*
 ATTACK AT DAWN -- LEMON --> LXFOPVEFRNHR
