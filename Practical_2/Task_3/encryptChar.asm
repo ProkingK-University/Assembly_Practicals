@@ -7,7 +7,7 @@ encryptChar:
     mov     rbp, rsp            ; Set the current stack frame as base pointer
     
     ; Store function arguments on the stack
-    mov     QWORD [rbp-24], rdi  ; Store vigenereSquare pointer in local variable
+    mov     QWORD [rbp-24], rdi ; Store vigenereSquare pointer in local variable
     mov     ecx, esi            ; Copy keywordChar to ecx (row index)
     mov     eax, edx            ; Copy plaintextChar to eax (column index)
     

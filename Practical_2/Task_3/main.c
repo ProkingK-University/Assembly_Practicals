@@ -39,16 +39,12 @@ int main()
     char pt[50];
     char kw[50];
 
-    /*sprintf(pt, "ATTACK AT DAWN");
+    sprintf(pt, "ATTACK AT DAWN");
     sprintf(kw, "LEMON");
     printf("%s", pt);
     printf(" -- %s --> ", kw);
-    output = encryptString(0, pt, kw);
-    printf("%s\n", output);*/
-
-    // check if we are allowed to pass in matrix
-    // external functions
-    // add remove spaces
+    output = encryptString(matrix, pt, kw);
+    printf("%s\n", output);
 
     sprintf(pt, "OHWHYOHWHYDOWEWAIT");
     sprintf(kw, "POTATO");
