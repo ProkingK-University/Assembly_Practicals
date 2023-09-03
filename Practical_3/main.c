@@ -19,9 +19,9 @@ struct Library
     int count;
 };
 
-struct Library *initialiseLibrary(void);
-int addBook(struct Library *lib, struct Book *book);
-struct Book *searchBookByISBN(struct Library *lib, char *isbn);
+extern struct Library *initialiseLibrary(void);
+extern int addBook(struct Library *lib, struct Book *book);
+extern struct Book *searchBookByISBN(struct Library *lib, char *isbn);
 extern struct Book *allocateBook(char *isbn, char *title, float price, int quantity);
 
 void printBookDetails(struct Book book)
@@ -34,8 +34,8 @@ void printBookDetails(struct Book book)
 
 int main()
 {
-    struct Book *book = allocateBook("978316148\0", "The C Programming Language\0", 9.99, 10);
-    printBookDetails(*book);
+    struct Library *lib = initialiseLibrary();
+    assert(lib != NULL);
 
     return 0;
 }

@@ -26,7 +26,7 @@ allocateBook:
     mov     dword [rbp-40], edx    ; quantity
 
     ; Call malloc to allocate memory for the Book structure
-    mov     rdi, 71        ; Size to allocate
+    mov     rdi, 72        ; Size to allocate
     call    malloc         ; Allocate memory
     mov     [book], rax    ; Store the memory address in the 'book' variable
 
