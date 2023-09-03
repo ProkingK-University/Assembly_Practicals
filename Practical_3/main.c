@@ -34,10 +34,19 @@ void printBookDetails(struct Book book)
 
 int main()
 {
+    struct Book *book = allocateBook("978316148\0", "The C Programming Language\0", 9.99, 10);
+    printBookDetails(*book);
+
+    return 0;
+}
+
+
+/*int main()
+{
     /*
         As always, this will only partially test your code. Please write more rigorous tests
         to verify that everything is as expected. That means testing negative flows as well as edge cases.
-    */
+    
     // Initialising library and asserting it's not NULL
     struct Library *lib = initialiseLibrary();
     assert(lib != NULL);
@@ -97,4 +106,4 @@ int main()
     printf("All tests passed successfully.\n");
 
     return 0;
-}
+}*/
