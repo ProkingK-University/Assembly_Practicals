@@ -8,6 +8,7 @@ section .data
 
 section .text
     global addBook
+    global searchBookByISBN
     global initialiseLibrary
 
 initialiseLibrary:
@@ -110,3 +111,41 @@ fail_end:
     mov     eax, 0
     leave
     ret
+
+searchBookByISBN:
+    push    rbp
+    mov     rbp, rsp
+    sub     rsp, 32
+
+    ; Initialize r12 and r13 with function arguments
+    mov     r12, rdi
+    mov     r13, rsi
+
+    ; Check if the library is empty
+    cmp     dword [r12+360], 0
+    je      not_found
+
+    ; Loop through the books array
+    mov     rbx, 0              ; Initialize counter (ecx) to 0
+
+    search:
+        ; Compare ISBN with books in libary
+        imul    rbx, 72
+        lea     rdi, [r12+rbx]
+        lea     rsi, [r13]
+        call    strcmp
+        cmp     eax, 0
+        je      found
+        inc     rbx
+        cmp     rbx, [r12+360]
+        jle      search
+
+    not_found:
+        mov     eax, 0  ;return null
+        leave
+        ret
+
+    found:
+        lea     rax, [r12+rbx] ; return book
+        leave
+        ret
