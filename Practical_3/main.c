@@ -37,6 +37,14 @@ int main()
     struct Library *lib = initialiseLibrary();
     assert(lib != NULL);
 
+    struct Book *book1 = allocateBook("978316148\0", "The C Programming Language\0", 9.99, 10);
+    assert(addBook(lib, book1) == 1);
+    assert(lib->count == 1);                                                  // Testing if the library count is correct
+    assert(lib->books[0].quantity == 10);                                     // Testing if the quantity is correct
+    assert(fabs(lib->books[0].price - 9.99) < EPSILON);                       // Testing if the price is correct
+    assert(strcmp(lib->books[0].isbn, "978316148\0") == 0);                   // Testing if the ISBN is correct
+    assert(strcmp(lib->books[0].title, "The C Programming Language\0") == 0); // Testing if the title is correct
+
     return 0;
 }
 

@@ -1,10 +1,13 @@
 extern malloc
 extern memset
+extern strcmp
+extern strcpy
 
 section .data
     library dq 0
 
 section .text
+    global addBook
     global initialiseLibrary
 
 initialiseLibrary:
@@ -26,5 +29,84 @@ initialiseLibrary:
     mov    dword [rax+360], 0  ; Set 'count' field of Library to 0
     mov     rax, [library]     ; Load 'library' address into rax
 
+    leave
+    ret
+
+addBook:
+    push    rbp
+    mov     rbp, rsp
+    sub     rsp, 32
+
+    ; Initialize r12 and r13 with function arguments
+    mov     r12, rdi
+    mov     r13, rsi
+
+    ; Loop through the books array
+    mov     rbx, 0              ; Initialize counter (ecx) to 0
+    loop_start:
+        ; Compare ISBN of current book
+        imul    rbx, 72
+        lea     rdi, [r12+rbx]
+        lea     rsi, [r13]
+        call    strcmp
+        cmp     eax, 0
+        je      book_exists
+        inc     rbx
+        cmp     rbx, [r12+360]
+        jl      loop_start
+
+        ; Check if the library is full
+    cmp     dword [r12+360], 5
+    je      fail_end
+
+    ; Copy ISBN
+    mov     ecx, dword [r12+360]
+    imul    rcx, 72
+    lea     rax, [r12+rcx]
+    lea     rdi, [rax]
+    lea     rsi, [r13]
+    call    strcpy
+
+    ; Copy Title
+    mov     ecx, dword [r12+360]
+    imul    rcx, 72
+    lea     rax, [r12+rcx]
+    lea     rdi, [rax+13]
+    lea     rsi, [r13+13]
+    call    strcpy
+
+    ; Copy the price
+    mov     ecx, dword [r12+360]
+    imul    rcx, 72
+    mov     eax, dword [r13+64]
+    lea     rdx, [r12+rcx]
+    mov     dword [rdx+64], eax
+
+    ; Copy the quantity
+    mov     ecx, dword [r12+360]
+    imul    rcx, 72
+    mov     eax, dword [r13+68]
+    lea     rdx, [r12+rcx]
+    mov     dword [rdx+68], eax
+
+    ; Increment the book count in the library
+    inc     dword [r12+360]
+
+    ; Jump to success_end
+    jmp     success_end
+
+book_exists:
+    ; Add the quantity of the new book to the existing book
+    mov     eax, dword [r13+68]
+    lea     rdx, [r12+rbx]
+    add     dword [rdx+68], eax
+
+success_end:
+    mov     eax, 1
+    leave
+    ret
+
+fail_end:
+    mov     eax, 0
     leave
     ret
