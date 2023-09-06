@@ -127,17 +127,18 @@ searchBookByISBN:
 
     ; Loop through the books array
     mov     rbx, 0              ; Initialize counter (ecx) to 0
+    mov     r14, 0
 
     search:
         ; Compare ISBN with books in libary
-        imul    rbx, 72
+        imul    rbx, r14, 72
         lea     rdi, [r12+rbx]
         lea     rsi, [r13]
         call    strcmp
         cmp     eax, 0
         je      found
-        inc     rbx
-        cmp     rbx, [r12+360]
+        inc     r14
+        cmp     r14, [r12+360]
         jle      search
 
     not_found:
